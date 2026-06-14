@@ -126,24 +126,51 @@ skills/
 - `course-paper-zh`：中文课程论文写作、真实参考文献、正文引用、模板格式化。
 - `domestic-paper-detection`：国内检测平台流程，包括 PaperPass、XYZSCIENCE、知网、万方等真实检测边界。
 
-## 安装
+## 安装到 Codex 和 Claude Code
 
-如果你的 Codex home 不是默认的 `~/.codex`，先设置：
+默认同时安装到：
 
-```bash
-export CODEX_HOME="$HOME/.codex"
-```
+- Codex：`~/.codex/skills`
+- Claude Code：`~/.claude/skills`
 
-安装 skills：
+执行：
 
 ```bash
 ./scripts/install.sh
 ```
 
-安装脚本会把三个 skill 复制到：
+只安装到 Codex：
+
+```bash
+./scripts/install.sh codex
+```
+
+只安装到 Claude Code：
+
+```bash
+./scripts/install.sh claude
+```
+
+如果你的路径不是默认值，可以设置：
+
+```bash
+export CODEX_HOME="$HOME/.codex"
+export CLAUDE_HOME="$HOME/.claude"
+```
+
+也可以直接覆盖 skills 目录：
+
+```bash
+export CODEX_SKILLS_DIR="$HOME/.codex/skills"
+export CLAUDE_CODE_SKILLS_DIR="$HOME/.claude/skills"
+```
+
+安装脚本会复制三个 skill：
 
 ```text
-$CODEX_HOME/skills/
+course-paper-final-delivery
+course-paper-zh
+domestic-paper-detection
 ```
 
 ## 依赖
@@ -349,6 +376,24 @@ node skills/course-paper-final-delivery/scripts/collect_artifacts.js \
 - 不绕过验证码、付费、短信、二维码登录或反爬机制。
 - 只报告官方响应里真实存在的数据。
 - 降 AIGC / 改写只能作为编辑辅助，不能破坏事实、引用和论文含义。
+
+## 隐私和信息用途
+
+姓名、学号、学校、学院、班级、指导老师等信息只用于：
+
+- 写入用户自己的论文 DOCX 封面、页眉或学校模板字段；
+- 作为检测平台需要的提交字段，例如 PaperPass 的作者字段；
+- 在用户指定的项目目录中生成本地 `project_brief.json` / `project_brief.md`，方便后续排版和核对。
+
+这些信息不会被写入本仓库，也不会上传到本项目的 GitHub。真正会发送到第三方的是用户主动提交检测时，平台官方接口所要求的论文文件和表单字段。
+
+对应代码位置：
+
+- 本地项目信息表：`skills/course-paper-final-delivery/scripts/write_project_brief.py`
+- PaperPass 作者字段注入：`skills/domestic-paper-detection/scripts/paperpass_restore_playwright.js`
+- PaperPass 登录态提交流程：`skills/domestic-paper-detection/scripts/paperpass_submit_from_profile.js`
+- 报告打包和本地汇总：`skills/course-paper-final-delivery/scripts/package_detection_results.py`
+- 防止误提交本地隐私文件：`.gitignore`
 
 ## 本仓库故意不包含
 

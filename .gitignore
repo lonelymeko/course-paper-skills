@@ -15,6 +15,8 @@ domestic_detection/
 login-success.json
 storage-state.json
 poll-*.json
+project_brief.json
+project_brief.md
 *-profile/
 playwright-chromium-profile/
 .env
