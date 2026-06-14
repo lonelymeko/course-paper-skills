@@ -29,7 +29,7 @@ Treat the user’s prompt as the project brief. Extract these fields from the pr
 - Detector preference: school platform, PaperPass, XYZ SCIENCE, CNKI, Wanfang, or other.
 - Proxy exports and login preferences.
 
-If author/class/teacher fields are unknown, use `Unknown` and record that in the final answer.
+If author/class/teacher fields are unknown, use `待填写` and record that in the final answer.
 
 ## Delivery Workflow
 
@@ -73,6 +73,7 @@ If author/class/teacher fields are unknown, use `Unknown` and record that in the
    - Link AIGC report.
    - State official rates/report IDs and exact source files.
    - State blockers or QA gaps plainly.
+   - Prefer `package_detection_results.py` to copy official PDFs/ZIPs into the project root and generate `检测报告汇总_<date>.md` plus `final_artifacts_summary.md`.
 
 ## Bundled Scripts
 
@@ -88,6 +89,19 @@ node skills/course-paper-final-delivery/scripts/collect_artifacts.js \
   --detection-summary <summary.md> \
   --out <project-dir>/final_artifacts_summary.md
 ```
+
+Prefer this packaging script when detector run directories are available:
+
+```bash
+python3 skills/course-paper-final-delivery/scripts/package_detection_results.py \
+  --project <project-dir> \
+  --final-docx <final.docx> \
+  --paperpass-run-dir <paperpass-run-dir> \
+  --xyzscience-run-dir <xyzscience-run-dir> \
+  --date YYYYMMDD
+```
+
+It copies the official PaperPass ZIP, extracts the PaperPass similarity/AIGC PDFs using GBK filename recovery, copies the XYZSCIENCE PDF, and writes Chinese delivery summaries. It must not invent missing detector values; if a platform did not return a report, state that plainly.
 
 ## Final Answer Template
 
