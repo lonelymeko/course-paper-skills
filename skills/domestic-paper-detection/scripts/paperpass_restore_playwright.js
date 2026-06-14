@@ -46,7 +46,7 @@ async function main() {
   }
   const title = arg('title', 'Untitled Paper');
   const author = arg('author', 'Unknown');
-  const userDataDir = path.join(runDir, 'playwright-chromium-profile');
+  const userDataDir = path.resolve(arg('profile-dir', path.join(runDir, 'playwright-chromium-profile')));
   const context = await chromium.launchPersistentContext(userDataDir, {
     headless: false,
     viewport: { width: 1366, height: 900 },
