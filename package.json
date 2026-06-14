@@ -1,0 +1,14 @@
+{
+  "name": "course-paper-skills",
+  "version": "0.1.0",
+  "private": false,
+  "description": "Codex skills and scripts for Chinese course-paper delivery with real detector report workflows.",
+  "license": "MIT",
+  "type": "commonjs",
+  "scripts": {
+    "check": "node --check skills/domestic-paper-detection/scripts/open_qr.js && node --check skills/domestic-paper-detection/scripts/xyzscience_flow.js && node --check skills/domestic-paper-detection/scripts/paperpass_qr_playwright.js && node --check skills/domestic-paper-detection/scripts/paperpass_restore_playwright.js && node --check skills/domestic-paper-detection/scripts/paperpass_submit_from_profile.js && node --check skills/course-paper-final-delivery/scripts/collect_artifacts.js"
+  },
+  "dependencies": {
+    "playwright": "^1.56.0"
+  }
+}
