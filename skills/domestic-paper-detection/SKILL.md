@@ -1,6 +1,6 @@
 ---
 name: domestic-paper-detection
-description: Use when a user needs real mainland China paper plagiarism/similarity or AIGC detection workflows, including CNKI/知网, 万方, PaperPass, 维普, browser automation handoff, official report retrieval, and strict refusal to fabricate detector percentages.
+description: "Use when a user needs real mainland China paper plagiarism/similarity or AIGC detection workflows, including CNKI/知网, 万方, PaperPass, 维普, browser automation handoff, official report retrieval, and strict refusal to fabricate detector percentages."
 ---
 
 # Domestic Paper Detection

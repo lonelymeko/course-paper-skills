@@ -1,6 +1,6 @@
 ---
 name: course-paper-zh
-description: Use when a user gives a Chinese course-paper prompt, assignment PDF, Word template, topic, or paper requirement and expects an end-to-end deliverable: final DOCX/PDF manuscript, real references, formatting to template, real plagiarism/similarity report, real AIGC report, and a saved evidence log.
+description: "Use when a user gives a Chinese course-paper prompt, assignment PDF, Word template, topic, or paper requirement and expects an end-to-end deliverable: final DOCX/PDF manuscript, real references, formatting to template, real plagiarism/similarity report, real AIGC report, and a saved evidence log."
 ---
 
 # Chinese Course Paper Workflow

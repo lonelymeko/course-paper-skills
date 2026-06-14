@@ -1,6 +1,6 @@
 ---
 name: course-paper-final-delivery
-description: Use when the user wants an end-to-end Chinese course paper from a prompt or assignment files through final DOCX/PDF, real references, Word template formatting, real plagiarism/similarity report, real AIGC report, optional legitimate revision, and a final artifact location summary.
+description: "Use when the user wants an end-to-end Chinese course paper from a prompt or assignment files through final DOCX/PDF, real references, Word template formatting, real plagiarism/similarity report, real AIGC report, optional legitimate revision, and a final artifact location summary."
 ---
 
 # Course Paper Final Delivery
