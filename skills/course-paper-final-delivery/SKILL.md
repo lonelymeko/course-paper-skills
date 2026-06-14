@@ -25,11 +25,11 @@ Use this as the coordinator skill for “从提示词/论文要求到最终稿+�
 Treat the user’s prompt as the project brief. Extract these fields from the prompt/files; ask only when missing data blocks execution:
 
 - Assignment requirement file and Word template path.
-- Topic, course, school, word count, required sections, citation style, deadline, and author fields.
+- Topic, course, school, college, major, class, student name, student ID, instructor/teacher, word count, required sections, citation style, and deadline.
 - Detector preference: school platform, PaperPass, XYZ SCIENCE, CNKI, Wanfang, or other.
 - Proxy exports and login preferences.
 
-If author/class/teacher fields are unknown, use `待填写` and record that in the final answer.
+Before final DOCX formatting and before any detector submission, collect the required personal/school metadata. Do not submit to PaperPass with `待填写`, `待填充`, `Unknown`, or any placeholder author because the official report will show that author. If the user refuses or cannot provide required metadata, stop before detector submission and state exactly what is missing.
 
 ## Delivery Workflow
 
@@ -37,37 +37,44 @@ If author/class/teacher fields are unknown, use `待填写` and record that in t
    - Put manuscript, sources, scripts, and reports in one folder.
    - Use `domestic_detection/runs/<service>-<timestamp>/` for detector evidence.
 
-2. **Read requirements and template**
+2. **Collect metadata and template**
+   - Ask for or extract: name, student ID, school, college, class, course, instructor, paper title, school template path, and assignment requirement path.
+   - Prefer `write_project_brief.py` to save `project_brief.json` and `project_brief.md`.
+   - If the school has a required DOCX template, ask for it and use it; do not guess school formatting from memory.
+
+3. **Read requirements and template**
    - Extract assignment constraints from PDF/DOCX.
    - Inspect the Word template structure and required front matter.
 
-3. **Research and reference audit**
+4. **Research and reference audit**
    - Use real sources only: DOI pages, official standards/specs, publisher pages, government/international organization reports.
    - Save source notes and ensure every bibliography item is cited in text.
 
-4. **Draft and revise**
+5. **Draft and revise**
    - Produce source-aware Chinese prose with body citations.
    - Include the paper’s own scenario design, analysis, limitations, and conclusions.
    - Remove generic filler and repeated sentence patterns before detection.
 
-5. **Format final manuscript**
+6. **Format final manuscript**
    - Generate DOCX following the school template.
+   - Fill the cover/front matter with the collected personal/school metadata before detection.
    - Render/visual-QA with Documents skill if LibreOffice/soffice is available; otherwise do structural DOCX checks and disclose the render gap.
 
-6. **Run real detection**
+7. **Run real detection**
    - Use `domestic-paper-detection`.
+   - For PaperPass, pass the real student name as `--author`; do not use placeholder authors except for intentional local tests with `--allow-placeholder-author`.
    - For QR login, save QR image, open it cross-platform, and poll official status:
      - macOS: `open <image>`
      - Linux: `xdg-open <image>`
      - Windows: `Start-Process <image>`
    - Save official raw JSON/HTML/PDF/ZIP reports.
 
-7. **Optional legitimate reduction/revision**
+8. **Optional legitimate reduction/revision**
    - If AIGC/similarity is too high and an official report identifies problem areas, revise those areas substantively.
    - If using an official rewrite API, save payload and response; manually review and integrate only if the result preserves meaning, citations, and academic tone.
    - Re-run official detection if the user needs a new final rate.
 
-8. **Final report**
+9. **Final report**
    - Link final DOCX/PDF.
    - Link similarity/plagiarism report.
    - Link AIGC report.
@@ -78,6 +85,23 @@ If author/class/teacher fields are unknown, use `待填写` and record that in t
 ## Bundled Scripts
 
 Use the helper script to create a final artifact index after manuscript/report generation:
+
+Use this before drafting/formatting when starting a project:
+
+```bash
+python3 skills/course-paper-final-delivery/scripts/write_project_brief.py \
+  --project <project-dir> \
+  --name "<姓名>" \
+  --student-id "<学号>" \
+  --school "<学校>" \
+  --college "<学院>" \
+  --class-name "<班级>" \
+  --course "<课程名称>" \
+  --instructor "<指导老师/任课老师>" \
+  --title "<论文题目>" \
+  --template "<学校论文模板.docx>" \
+  --requirements "<论文要求.pdf>"
+```
 
 ```bash
 node skills/course-paper-final-delivery/scripts/collect_artifacts.js \

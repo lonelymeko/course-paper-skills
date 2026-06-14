@@ -7,10 +7,12 @@
 ## 你只需要做什么
 
 1. 提供论文要求、Word 模板、题目或写作提示。
-2. 提供最终稿 DOCX 的保存位置，或让 AI 生成并格式化 DOCX。
-3. 如果检测平台要求登录，扫描 AI 弹出的二维码。
-4. 如果平台出现腾讯验证码、短信、付费、次数确认等官方限制，自己在官方页面完成。
-5. 最后检查 AI 输出的最终稿、查重报告、AIGC 报告和汇总文件。
+2. 提供完整个人和学校信息：姓名、学号、学校、学院、专业、班级、课程名、指导老师/任课老师。
+3. 尽量提供本校论文模板 DOCX 和课程论文要求文件，方便 AI 按学校格式排版。
+4. 提供最终稿 DOCX 的保存位置，或让 AI 生成并格式化 DOCX。
+5. 如果检测平台要求登录，扫描 AI 弹出的二维码。
+6. 如果平台出现腾讯验证码、短信、付费、次数确认等官方限制，自己在官方页面完成。
+7. 最后检查 AI 输出的最终稿、查重报告、AIGC 报告和汇总文件。
 
 ## AI 负责做什么
 
@@ -26,7 +28,66 @@ AI 不会、也不应该做这些事：
 - 绕过二维码登录、验证码、短信、付费、次数限制或反爬机制；
 - 把处理中状态的 `Score=0` / `AiScore=0` 当成最终结果；
 - 伪造检测平台报告、百分比、报告 ID 或参考文献；
+- 在缺少真实姓名时提交 PaperPass 检测，因为官方报告会显示作者字段；
 - 保存或提交用户论文、报告、Cookie、二维码会话、token 到本仓库。
+
+## 检测前必填信息
+
+正式写作、排版和检测前，建议先让 AI 建立项目信息表。至少准备：
+
+| 字段 | 用途 | 是否必填 |
+| --- | --- | --- |
+| 姓名 | Word 封面、PaperPass 作者字段 | 必填 |
+| 学号 | Word 封面、学校归档 | 必填 |
+| 学校 | Word 封面、模板格式 | 必填 |
+| 学院 | Word 封面、模板格式 | 必填 |
+| 专业 | Word 封面、模板格式 | 建议 |
+| 班级 | Word 封面、模板格式 | 必填 |
+| 课程名称 | 论文封面和标题页 | 必填 |
+| 指导老师/任课老师 | 论文封面和标题页 | 必填 |
+| 论文题目 | DOCX 标题、检测标题 | 必填 |
+| 学校论文模板 DOCX | 格式、封面、页眉页脚 | 强烈建议 |
+| 课程论文要求 PDF/DOCX | 字数、结构、评分要求 | 强烈建议 |
+
+可直接让 AI 先运行：
+
+```bash
+python3 skills/course-paper-final-delivery/scripts/write_project_brief.py \
+  --project ./paper-project \
+  --name "姓名" \
+  --student-id "学号" \
+  --school "学校" \
+  --college "学院" \
+  --major "专业" \
+  --class-name "班级" \
+  --course "课程名称" \
+  --instructor "指导老师或任课老师" \
+  --title "论文题目" \
+  --template "./学校论文模板.docx" \
+  --requirements "./课程论文要求.pdf"
+```
+
+这个脚本会生成 `project_brief.json` 和 `project_brief.md`。如果必填字段缺失，默认会拒绝继续，避免最终报告里出现“作者：待填写”。
+
+推荐用户提示词：
+
+```text
+请使用 course-paper-final-delivery 完成我的课程论文。我的信息如下：
+姓名：...
+学号：...
+学校：...
+学院：...
+专业：...
+班级：...
+课程名称：...
+指导老师/任课老师：...
+论文题目：...
+学校论文模板：/path/to/template.docx
+论文要求文件：/path/to/requirements.pdf
+项目目录：/path/to/project
+
+请先建立 project_brief，确认信息完整后再写作、排版和提交检测。
+```
 
 ## 实跑体验和已优化点
 
@@ -45,6 +106,7 @@ skills/
     SKILL.md
     scripts/collect_artifacts.js
     scripts/package_detection_results.py
+    scripts/write_project_brief.py
   course-paper-zh/
     SKILL.md
   domestic-paper-detection/
@@ -120,24 +182,46 @@ export all_proxy=socks5://127.0.0.1:7897
 
 ## 推荐完整流程
 
-### 1. 生成或确认最终稿
+### 1. 建立项目信息表
 
 用户给 AI：
 
 - 课程论文要求 PDF；
 - Word 模板；
-- 题目、课程名、姓名/班级/学号等信息；
+- 姓名、学号、学校、学院、专业、班级、课程名、指导老师/任课老师、论文题目；
 - 目标项目目录。
+
+先运行：
+
+```bash
+python3 skills/course-paper-final-delivery/scripts/write_project_brief.py \
+  --project ./paper-project \
+  --name "姓名" \
+  --student-id "学号" \
+  --school "学校" \
+  --college "学院" \
+  --major "专业" \
+  --class-name "班级" \
+  --course "课程名称" \
+  --instructor "指导老师或任课老师" \
+  --title "论文题目" \
+  --template "./学校论文模板.docx" \
+  --requirements "./课程论文要求.pdf"
+```
+
+这一步应该在最终 DOCX 排版和 PaperPass 提交前完成。
+
+### 2. 生成或确认最终稿
 
 AI 使用 `course-paper-final-delivery` 和 `course-paper-zh` 完成：
 
 - 需求提取；
 - 真实参考文献检索和核验；
 - 正文写作和引用；
-- DOCX 模板格式化；
+- DOCX 模板格式化和封面信息填写；
 - 最终稿路径整理。
 
-### 2. XYZSCIENCE 全文 AIGC 检测
+### 3. XYZSCIENCE 全文 AIGC 检测
 
 ```bash
 node skills/domestic-paper-detection/scripts/xyzscience_flow.js \
@@ -156,7 +240,7 @@ node skills/domestic-paper-detection/scripts/xyzscience_flow.js \
 5. 轮询检测任务；
 6. 下载官方 PDF 报告。
 
-### 3. PaperPass 查重和 AIGC 检测
+### 4. PaperPass 查重和 AIGC 检测
 
 先上传解析：
 
@@ -180,8 +264,10 @@ node skills/domestic-paper-detection/scripts/paperpass_restore_playwright.js \
   --run-dir ./runs/paperpass-YYYYMMDD-HHMMSS \
   --profile-dir ./runs/paperpass-login/playwright-chromium-profile \
   --title "课程论文题目" \
-  --author "作者姓名"
+  --author "真实姓名"
 ```
+
+`--author` 必须是真实姓名；脚本默认拒绝 `待填写`、`待填充`、`Unknown` 等占位值，避免官方报告作者字段错误。
 
 如果 PaperPass 要求腾讯验证码，用户需要在 Playwright Chromium 窗口手动完成。完成提交后，AI 轮询并下载官方报告：
 
@@ -192,7 +278,7 @@ node skills/domestic-paper-detection/scripts/paperpass_poll_download.js \
   --file-name "PaperPass报告列表里的FileName"
 ```
 
-### 4. 打包最终交付文件
+### 5. 打包最终交付文件
 
 检测完成后推荐运行：
 

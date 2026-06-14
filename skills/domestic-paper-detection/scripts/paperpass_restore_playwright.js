@@ -9,6 +9,14 @@ function arg(name, fallback = undefined) {
   return fallback;
 }
 
+function flag(name) {
+  return process.argv.includes(`--${name}`);
+}
+
+function looksPlaceholder(value) {
+  return ['', 'Unknown', 'unknown', '待填写', '待填充', '未知', 'N/A', 'na'].includes(String(value || '').trim());
+}
+
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -40,12 +48,16 @@ async function injectPaperpassState(page, runDir, title, author) {
 }
 
 async function main() {
+  const title = arg('title', 'Untitled Paper');
+  const author = arg('author', '');
+  if (looksPlaceholder(author) && !flag('allow-placeholder-author')) {
+    throw new Error('PaperPass author is missing or placeholder. Provide --author "<真实姓名>" before submission, or pass --allow-placeholder-author only for a deliberate test run.');
+  }
+
   const runDir = path.resolve(arg('run-dir', ''));
   if (!runDir || !fs.existsSync(runDir)) {
     throw new Error('Usage: node paperpass_playwright_flow.js --run-dir <paperpass-run-dir>');
   }
-  const title = arg('title', 'Untitled Paper');
-  const author = arg('author', 'Unknown');
   const userDataDir = path.resolve(arg('profile-dir', path.join(runDir, 'playwright-chromium-profile')));
   const context = await chromium.launchPersistentContext(userDataDir, {
     headless: false,

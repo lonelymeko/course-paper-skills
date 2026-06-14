@@ -13,6 +13,14 @@ function arg(name, fallback = undefined) {
   return fallback;
 }
 
+function flag(name) {
+  return process.argv.includes(`--${name}`);
+}
+
+function looksPlaceholder(value) {
+  return ['', 'Unknown', 'unknown', '待填写', '待填充', '未知', 'N/A', 'na'].includes(String(value || '').trim());
+}
+
 function writeText(filePath, text) {
   fs.writeFileSync(filePath, text, 'utf8');
 }
@@ -126,14 +134,18 @@ function main() {
   process.env.http_proxy = process.env.http_proxy || DEFAULT_PROXY;
   process.env.all_proxy = process.env.all_proxy || 'socks5://127.0.0.1:7897';
 
+  const checkType = arg('check-type', 'free');
+  const title = arg('title', 'Untitled Paper');
+  const author = arg('author', '');
+  if (looksPlaceholder(author) && !flag('allow-placeholder-author')) {
+    throw new Error('PaperPass author is missing or placeholder. Provide --author "<真实姓名>" before submission, or pass --allow-placeholder-author only for a deliberate test run.');
+  }
+
   const runDir = path.resolve(arg('run-dir', ''));
   if (!runDir || !fs.existsSync(runDir)) {
     throw new Error('Usage: node paperpass_submit_playwright_profile.js --run-dir <paperpass-run-dir>');
   }
   const profileDir = path.resolve(arg('profile-dir', path.join(runDir, 'playwright-chromium-profile')));
-  const checkType = arg('check-type', 'free');
-  const title = arg('title', 'Untitled Paper');
-  const author = arg('author', 'Unknown');
 
   const sign = JSON.parse(fs.readFileSync(path.join(runDir, '01-get-upload-sign.json'), 'utf8'));
   const parse = JSON.parse(fs.readFileSync(path.join(runDir, '03-parse.json'), 'utf8'));

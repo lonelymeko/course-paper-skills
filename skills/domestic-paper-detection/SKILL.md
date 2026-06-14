@@ -13,6 +13,7 @@ Use this skill when the task needs a real AIGC or plagiarism report from a China
 - Do not claim an API works until it has been called and a real platform response is saved.
 - Do not bypass login, captcha, payment, SMS, QR-code login, or anti-bot controls.
 - If a site requires user action, stop at the handoff point and ask the user to log in, solve captcha, pay, or provide an API key/cookie.
+- Do not submit placeholder paper metadata to official detectors. For PaperPass, require a real `--author` value before final submission because the official report shows the author field.
 - Revisions after a report must be legitimate originality improvement: cite sources, remove patchwriting, restructure analysis, add own reasoning. Do not frame work as evading detectors.
 
 ## Preferred Mainland Routes
@@ -41,6 +42,7 @@ Use this skill when the task needs a real AIGC or plagiarism report from a China
      - Use Playwright Chromium persistent profile, not system Edge or AppleScript.
      - Save official upload/parse run under `domestic_detection/runs/paperpass-*`.
      - If logged in, `paperpass_submit_playwright_profile.js` can read the Playwright profile cookies, call the official `/panel/index/submit-papers-key` endpoint, and save official pre-submit/final-submit JSON.
+     - `paperpass_restore_playwright.js` and `paperpass_submit_from_profile.js` reject missing/placeholder authors by default. Pass `--author "<真实姓名>"`; only use `--allow-placeholder-author` for deliberate tests that will not be delivered.
      - If PaperPass returns `free_captcha` or `fee_captcha`, stop and ask the user to solve TencentCaptcha in the Playwright Chromium window. Do not synthesize captcha payloads.
      - Report list endpoint confirmed as `POST /panel/report/index?page=1`; offline report download endpoint confirmed as `/panel/report/report?filename=<FileName>`.
      - After manual captcha/submission, `paperpass_poll_download.js` can read cookies from the Playwright Chromium profile, poll the official report list until `Status:"1"`, and download the official offline report file.

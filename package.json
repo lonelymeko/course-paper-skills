@@ -6,7 +6,7 @@
   "license": "MIT",
   "type": "commonjs",
   "scripts": {
-    "check": "node --check skills/domestic-paper-detection/scripts/open_qr.js && node --check skills/domestic-paper-detection/scripts/xyzscience_flow.js && node --check skills/domestic-paper-detection/scripts/paperpass_qr_playwright.js && node --check skills/domestic-paper-detection/scripts/paperpass_restore_playwright.js && node --check skills/domestic-paper-detection/scripts/paperpass_submit_from_profile.js && node --check skills/domestic-paper-detection/scripts/paperpass_poll_download.js && node --check skills/course-paper-final-delivery/scripts/collect_artifacts.js && python3 -m py_compile skills/course-paper-final-delivery/scripts/package_detection_results.py"
+    "check": "node --check skills/domestic-paper-detection/scripts/open_qr.js && node --check skills/domestic-paper-detection/scripts/xyzscience_flow.js && node --check skills/domestic-paper-detection/scripts/paperpass_qr_playwright.js && node --check skills/domestic-paper-detection/scripts/paperpass_restore_playwright.js && node --check skills/domestic-paper-detection/scripts/paperpass_submit_from_profile.js && node --check skills/domestic-paper-detection/scripts/paperpass_poll_download.js && node --check skills/course-paper-final-delivery/scripts/collect_artifacts.js && python3 -m py_compile skills/course-paper-final-delivery/scripts/package_detection_results.py skills/course-paper-final-delivery/scripts/write_project_brief.py"
   },
   "dependencies": {
     "playwright": "^1.56.0"
