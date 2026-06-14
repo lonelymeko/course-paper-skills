@@ -43,6 +43,7 @@ Use this skill when the task needs a real AIGC or plagiarism report from a China
      - If logged in, `paperpass_submit_playwright_profile.js` can read the Playwright profile cookies, call the official `/panel/index/submit-papers-key` endpoint, and save official pre-submit/final-submit JSON.
      - If PaperPass returns `free_captcha` or `fee_captcha`, stop and ask the user to solve TencentCaptcha in the Playwright Chromium window. Do not synthesize captcha payloads.
      - Report list endpoint confirmed as `POST /panel/report/index?page=1`; offline report download endpoint confirmed as `/panel/report/report?filename=<FileName>`.
+     - After manual captcha/submission, `paperpass_poll_download.js` can read cookies from the Playwright Chromium profile, poll the official report list until `Status:"1"`, and download the official offline report file.
 5. XYZ SCIENCE: `https://xyzscience.com/detection` and `https://xyzscience.com/rewrite`
    - API base observed in frontend: `/api`.
    - Confirmed WeChat QR login route:
@@ -101,6 +102,7 @@ Use scripts before retyping API flows:
 - `scripts/open_qr.js`: Downloads/opens QR images cross-platform.
 - `scripts/xyzscience_flow.js`: Performs XYZ SCIENCE QR login, user-info check, DOCX full-text AIGC detection, report PDF download, and optional paragraph rewrite.
 - `scripts/paperpass_qr_playwright.js`: Opens PaperPass login in Playwright Chromium, screenshots the QR/login area, opens the image, and polls for logged-in browser state.
+- `scripts/paperpass_poll_download.js`: Reads PaperPass cookies from a Playwright Chromium profile, polls the official report list endpoint, and downloads the official report after completion.
 
 XYZ SCIENCE examples:
 
@@ -122,6 +124,15 @@ PaperPass QR login handoff example:
 ```bash
 node skills/domestic-paper-detection/scripts/paperpass_qr_playwright.js \
   --run-dir <project>/domestic_detection/runs/paperpass-<timestamp>
+```
+
+PaperPass report polling and download example:
+
+```bash
+node skills/domestic-paper-detection/scripts/paperpass_poll_download.js \
+  --run-dir <project>/domestic_detection/runs/paperpass-<timestamp> \
+  --profile-dir <project>/domestic_detection/runs/paperpass-login/playwright-chromium-profile \
+  --file-name "<PaperPass FileName from report list>"
 ```
 
 ## End-to-End Report Workflow

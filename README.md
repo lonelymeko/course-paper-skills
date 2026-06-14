@@ -28,6 +28,7 @@ skills/
     scripts/paperpass_upload_parse.py
     scripts/paperpass_restore_playwright.js
     scripts/paperpass_submit_from_profile.js
+    scripts/paperpass_poll_download.js
 ```
 
 用途概览：
@@ -172,7 +173,18 @@ node skills/domestic-paper-detection/scripts/paperpass_submit_from_profile.js \
 
 如果 PaperPass 返回验证码、付费、次数不足或其他限制，脚本会停止并保存官方响应，不会绕过平台限制。
 
-### 7. 汇总最终产物位置
+### 7. PaperPass 轮询和下载报告
+
+```bash
+node skills/domestic-paper-detection/scripts/paperpass_poll_download.js \
+  --run-dir ./runs/paperpass-YYYYMMDD-HHMMSS \
+  --profile-dir ./runs/paperpass-login/playwright-chromium-profile \
+  --file-name "PaperPass报告列表里的FileName"
+```
+
+这个脚本会读取 Playwright Chromium profile 里的 PaperPass 登录 Cookie，调用官方报告列表接口轮询状态；只有官方返回完成态后，才会调用官方离线报告下载接口保存报告文件。处理中状态的 `Score=0` 或 `AiScore=0` 不能当作最终结果。
+
+### 8. 汇总最终产物位置
 
 ```bash
 node skills/course-paper-final-delivery/scripts/collect_artifacts.js \
