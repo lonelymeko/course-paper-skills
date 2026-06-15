@@ -75,7 +75,12 @@ Before final DOCX formatting and before any detector submission, collect the req
 
 8. **Optional legitimate reduction/revision**
    - If AIGC/similarity is too high and an official report identifies problem areas, revise those areas substantively.
-   - If using an official rewrite API, save payload and response; manually review and integrate only if the result preserves meaning, citations, and academic tone.
+   - For XYZSCIENCE AIGC reduction, use the official paragraph rewrite flow only on high-risk paragraphs from the official AIGC report:
+     - save the original paragraph, request payload, official response, and integration notes;
+     - manually review the rewrite for meaning, facts, citations, terminology, and academic tone;
+     - integrate only approved changes into the DOCX and re-apply the school template;
+     - do not report a lower AIGC rate until a new real detector report is downloaded.
+   - If using any official rewrite API, save payload and response; manually review and integrate only if the result preserves meaning, citations, and academic tone.
    - Re-run official detection if the user needs a new final rate.
 
 9. **Final report**

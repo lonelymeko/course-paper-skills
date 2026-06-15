@@ -299,7 +299,29 @@ node skills/domestic-paper-detection/scripts/xyzscience_flow.js \
 5. 轮询检测任务；
 6. 下载官方 PDF 报告。
 
-### 4. PaperPass 查重和 AIGC 检测
+### 4. XYZSCIENCE 辅助降 AIGC
+
+如果官方 AIGC 报告显示比例偏高，推荐只对报告中风险较高的段落做“段落级”处理，不要整篇机械改写。流程是：
+
+1. AI 从官方 AIGC 报告中定位高风险段落；
+2. 用户扫码登录 XYZSCIENCE；
+3. AI 调用 XYZSCIENCE 官方改写接口保存原文、请求参数和官方返回；
+4. AI 人工式审核改写结果，保留事实、引用、术语和论文含义；
+5. AI 合并到 DOCX，重新套模板；
+6. 用户需要新结论时，再跑一次真实 AIGC 检测。
+
+命令示例：
+
+```bash
+node skills/domestic-paper-detection/scripts/xyzscience_flow.js \
+  --mode login-rewrite \
+  --run-dir ./runs/xyzscience-rewrite \
+  --text-file ./paper-project/high-risk-paragraph.txt
+```
+
+注意：改写结果只是编辑参考，不等同于检测报告。最终 AIGC 率必须来自重新调用真实检测平台后的官方报告。
+
+### 5. PaperPass 查重和 AIGC 检测
 
 先上传解析：
 
@@ -337,7 +359,7 @@ node skills/domestic-paper-detection/scripts/paperpass_poll_download.js \
   --file-name "PaperPass报告列表里的FileName"
 ```
 
-### 5. 打包最终交付文件
+### 6. 打包最终交付文件
 
 检测完成后推荐运行：
 
