@@ -248,6 +248,38 @@ AI 使用 `course-paper-final-delivery` 和 `course-paper-zh` 完成：
 - DOCX 模板格式化和封面信息填写；
 - 最终稿路径整理。
 
+套学校模板时的原则：
+
+- 模板原件只作为输入，不改动用户提供的模板文件；
+- 固定封面只替换课程名称、题目、作者、学院、班级、指导老师、日期等字段，不随意重做封面；
+- 模板里的示例正文、示例参考文献和红色说明文字不进入最终稿；
+- 如果旧稿 DOCX 的底层 OOXML 导致 Word/LibreOffice 打不开，AI 会用标准 DOCX API 按模板重建正文。
+
+如果课程要求限制插图，例如“插图不得多于 6 张，自绘插图不得少于 2 张”，AI 会优先生成可追溯的自绘系统图/流程图，并在图题中标注“（自绘）”。这类图适合物联网、软件工程、系统设计类论文，比外部图片或泛化绘图 prompt 更容易满足课程要求。
+
+可复用脚本：
+
+```bash
+node skills/course-paper-final-delivery/scripts/generate_self_drawn_figures.js \
+  --out-dir ./paper-project/self_drawn_figures
+
+python3 skills/course-paper-final-delivery/scripts/add_self_drawn_figures.py \
+  --input ./paper-project/draft.docx \
+  --output ./paper-project/draft-with-figures.docx \
+  --figure-dir ./paper-project/self_drawn_figures
+```
+
+套学校模板并重建稳定 DOCX：
+
+```bash
+COURSE_PAPER_PYTHON_DEPS=/path/to/python-docx-deps \
+python3 skills/course-paper-final-delivery/scripts/rebuild_final_with_python_docx.py \
+  --template ./学校论文模板.docx \
+  --source ./paper-project/draft-with-figures.docx \
+  --fig-dir ./paper-project/self_drawn_figures \
+  --out ./paper-project/final.docx
+```
+
 ### 3. XYZSCIENCE 全文 AIGC 检测
 
 ```bash
@@ -326,6 +358,29 @@ python3 skills/course-paper-final-delivery/scripts/package_detection_results.py 
 - `XYZSCIENCE_AIGC报告_YYYYMMDD.pdf`
 - `检测报告汇总_YYYYMMDD.md`
 - `final_artifacts_summary.md`
+
+如果老师要求固定提交命名，例如：
+
+- 论文文档：`22-1-张三-论文题目.docx`
+- 查重报告：`22-1-张三-论文题目-查重报告.pdf`
+- 压缩包：`22-1-张三-物联网期末论文.zip`
+
+使用：
+
+```bash
+python3 skills/course-paper-final-delivery/scripts/package_submission_zip.py \
+  --project ./paper-project \
+  --class-name "22-1" \
+  --name "张三" \
+  --title "论文题目" \
+  --docx ./paper-project/final.docx \
+  --similarity-report ./paper-project/PaperPass_查重报告_YYYYMMDD.pdf \
+  --aigc-report ./paper-project/PaperPass_AIGC检测报告_YYYYMMDD.pdf \
+  --extra-report ./paper-project/XYZSCIENCE_AIGC报告_YYYYMMDD.pdf \
+  --course-zip-title "物联网期末论文"
+```
+
+脚本会创建 `提交包/`，复制并改名 DOCX/PDF，再生成 UTF-8 文件名 ZIP，避免中文文件名在部分系统里乱码。
 
 ## 单独工具说明
 

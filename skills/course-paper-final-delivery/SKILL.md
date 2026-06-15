@@ -58,6 +58,10 @@ Before final DOCX formatting and before any detector submission, collect the req
 6. **Format final manuscript**
    - Generate DOCX following the school template.
    - Fill the cover/front matter with the collected personal/school metadata before detection.
+   - Preserve the school template source file. Use it as an input only; write a new output DOCX.
+   - When a template has a fixed cover, keep its cover skeleton and only replace form fields. Do not redesign the cover unless explicitly requested.
+   - If the manuscript DOCX came from fragile OOXML generation and LibreOffice/Word cannot open it, rebuild the body with a standard DOCX API while still using the school template as the base.
+   - Check assignment figure constraints. For requirements like “插图不得多于 6 张，自绘插图不得少于 2 张”, create or insert traceable self-drawn system/process diagrams and make captions include `（自绘）`.
    - Render/visual-QA with Documents skill if LibreOffice/soffice is available; otherwise do structural DOCX checks and disclose the render gap.
 
 7. **Run real detection**
@@ -81,6 +85,10 @@ Before final DOCX formatting and before any detector submission, collect the req
    - State official rates/report IDs and exact source files.
    - State blockers or QA gaps plainly.
    - Prefer `package_detection_results.py` to copy official PDFs/ZIPs into the project root and generate `检测报告汇总_<date>.md` plus `final_artifacts_summary.md`.
+   - If the teacher specifies submission names, create a separate submission folder and ZIP without renaming source evidence. Example:
+     - DOCX: `<班级>-<姓名>-<论文题目>.docx`
+     - Similarity report: `<班级>-<姓名>-<论文题目>-查重报告.pdf`
+     - ZIP: `<班级>-<姓名>-物联网期末论文.zip`
 
 ## Bundled Scripts
 
@@ -126,6 +134,45 @@ python3 skills/course-paper-final-delivery/scripts/package_detection_results.py 
 ```
 
 It copies the official PaperPass ZIP, extracts the PaperPass similarity/AIGC PDFs using GBK filename recovery, copies the XYZSCIENCE PDF, and writes Chinese delivery summaries. It must not invent missing detector values; if a platform did not return a report, state that plainly.
+
+Use these when a paper needs self-drawn diagrams or a standard DOCX rebuild:
+
+```bash
+node skills/course-paper-final-delivery/scripts/generate_self_drawn_figures.js \
+  --out-dir <project-dir>/self_drawn_figures
+
+python3 skills/course-paper-final-delivery/scripts/add_self_drawn_figures.py \
+  --input <draft.docx> \
+  --output <draft-with-figures.docx> \
+  --figure-dir <project-dir>/self_drawn_figures
+```
+
+Use the template rebuild script when the source manuscript opens poorly in Word/LibreOffice or the school template must be applied after figure insertion:
+
+```bash
+COURSE_PAPER_PYTHON_DEPS=/path/to/python-docx-deps \
+python3 skills/course-paper-final-delivery/scripts/rebuild_final_with_python_docx.py \
+  --template <school-template.docx> \
+  --source <draft-with-figures.docx> \
+  --fig-dir <project-dir>/self_drawn_figures \
+  --out <final.docx>
+```
+
+The rebuild script uses the school template as a base, preserves the template source file, fills known cover fields, removes template instructions/example text from the output, rebuilds the body with standard Word parts, and inserts two self-drawn PNG diagrams.
+
+Use this to create teacher-ready submission copies:
+
+```bash
+python3 skills/course-paper-final-delivery/scripts/package_submission_zip.py \
+  --project <project-dir> \
+  --class-name "23-5" \
+  --name "张三" \
+  --title "论文题目" \
+  --docx <final.docx> \
+  --similarity-report <查重报告.pdf> \
+  --aigc-report <AIGC报告.pdf> \
+  --course-zip-title "物联网期末论文"
+```
 
 ## Final Answer Template
 
